@@ -77,14 +77,16 @@ const loadUsers = async () => {
     users.value = res.data;
     processedUsers.value = [...users.value];
   } catch (err) {
-    console.error("Error al conectar con el servidor.");
+    console.error("Error al conectar con el servidor:", err && err.message ? err.message : err);
+    // Mostrar al usuario un aviso claro
+    alert('Error al conectar con el servidor. Asegúrate de que el backend está en ejecución (puerto 5001).');
   }
 };
 
 const saveUser = async () => {
   try {
     const payload = {
-      first_name: form.value.firstName,
+      firstName: form.value.firstName,
       lastName: form.value.lastName,
       idNumber: form.value.idNumber,
       birthDate: form.value.birthDate,
