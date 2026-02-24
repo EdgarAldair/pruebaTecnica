@@ -44,7 +44,7 @@
           <td>{{ calculateAge(user.birthDate) }}</td>
           <td class="action-cell">
             <button class="btn-edit" @click="editUser(user)">✏️ Editar</button>
-            <button class="btn-danger" @click="removeUser(user._id)">
+            <button class="btn-danger" @click="removeUser(user._id,user.firstName,user.lastName)">
               🗑️ Borrar
             </button>
           </td>
@@ -97,15 +97,25 @@ const saveUser = async () => {
     loadUsers();
   } catch (err) {
     alert("ERROR: El servidor rechazó los datos. Revisa el mapeo de campos.");
+ loadUsers();
   }
 };
 
-const removeUser = async (id) => {
-  alert("Botón presionado para el ID: " + id);
+const removeUser = async (id,firstName,lastName) => {
+  alert("Se ha eliminado el usuario: " + firstName+" "+lastName);
+  await axios.delete(`${API_URL}/${id}`);
+  users.value = user.value.filter(u => u.id !== id);
+  loadUsers();
 };
 
 const editUser = (user) => {
+  var date = new Date(user.birthDate);
+    form.value.firstName = user.firstName,
+    form.value.lastName= user.lastName,
+    form.value.idNumber= user.idNumber,
+    form.value.birthDate= user.birthDate.date,
   console.log("Cargar usuario en formulario:", user);
+
 };
 
 const updateUser = async () => {
@@ -122,11 +132,14 @@ const processData = () => {
 };
 
 const formatFullName = (user) => {
-  return "PENDIENTE";
+  return user.firstName+" "+user.lastName;
 };
 
 const calculateAge = (birthDate) => {
-  return "??";
+  var fechaActual = new Date();
+  var cumpleaños= new Date(birthDate);
+  var calcularEdad= fechaActual.getFullYear()-cumpleaños.getFullYear();
+  return calcularEdad;
 };
 
 onMounted(loadUsers);
